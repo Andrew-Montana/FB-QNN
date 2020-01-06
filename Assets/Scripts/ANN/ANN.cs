@@ -168,34 +168,21 @@ public class ANN{
 		return weightStr;
 	}
 
-	public void LoadWeights(string weightStr, string biasStr)
+	public void LoadWeights(List<double> weightsload, List<double> biasload)
 	{
-		if(weightStr == "") return;
-        weightStr = weightStr.Replace(",", ".");
-		string[] weightValues = weightStr.Split('!');
-        biasStr = biasStr.Replace(",", ".");
-        string[] biasValues = biasStr.Split('!');
-        int w = 0;
+        int kkk = 0;
+        int bbb = 0;
 		foreach(Layer l in layers)
 		{
 			foreach(Neuron n in l.neurons)
 			{
-                int neuronCount = 0;
 				for(int i = 0; i < n.weights.Count; i++)
 				{
-                    Debug.Log(weightValues[w]);
-					//n.weights[i] = System.Convert.ToDouble(weightValues[w]);
-                    double tmp; 
-                    double.TryParse(weightValues[w], out tmp);
-                    n.weights[i] = tmp;
-
-                    w++;
+                    n.weights[i] = weightsload[kkk];
+                    kkk++;
 				}
-                double tmpb;
-                double.TryParse(biasValues[neuronCount], out tmpb);
-                // n.bias = System.Convert.ToDouble(weightValues[w]);
-                n.bias = tmpb;
-                neuronCount++;
+                n.bias = biasload[bbb];
+                bbb++;
 			}
 		}
 	}

@@ -25,7 +25,7 @@ public class Replay
 public class Bird : MonoBehaviour
 {
     #region ann part
-    ANN ann;
+    private ANN ann;
     private float reward = 0.0f;                            //reward to associate with actions
     private List<Replay> replayMemory = new List<Replay>(); //memory - list of past actions and rewards
     private int mCapacity => 10000;                          //memory capacity
@@ -49,6 +49,11 @@ public class Bird : MonoBehaviour
 
     public PipeSet pipes;
     public float counter = 0f;
+
+    public ANN GetANN()
+    {
+        return ann;
+    }
 
     private void Start()
     {
