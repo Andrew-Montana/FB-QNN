@@ -44,15 +44,15 @@ public class Bird : MonoBehaviour
     private bool dead = false;
 
     private bool screenPressed = false;
-    const float height = 2f;
-    const float pipeSpace = .6f;
+    const float height = 2f; // Distance of the center to the top/bottom
+    const float pipeSpace = .6f;  // Pipes are offset by .6 on Y-axis
 
     public PipeSet pipes;
     public float counter = 0f;
 
     private void Start()
     {
-        Time.timeScale = 70f;
+        Time.timeScale = 1;
         ann = new ANN(5, 2, 1, 6, 0.2f);
         myBody = GetComponent<Rigidbody2D>();
         startPos = transform.localPosition;
@@ -144,17 +144,21 @@ public class Bird : MonoBehaviour
 
     private void Push()
     {
-        myBody.AddForce(Vector2.up, ForceMode2D.Impulse);
+        myBody.velocity = Vector3.zero;
+        myBody.AddForce(Vector2.up * 20, ForceMode2D.Force);
     }
 
     public List<double> CollectObservations()
     {
-        List<double> myStates = new List<double>();
-        myStates.Add(gameObject.transform.localPosition.y / height);
-        myStates.Add(Mathf.Clamp(myBody.velocity.y, -height, height) / height);
         Vector3 pipePos = pipes.GetNextPipe().localPosition;
-        myStates.Add((pipePos.y - pipeSpace) / height);
-        myStates.Add((pipePos.y + pipeSpace) / height);
+        List<double> myStates = new List<double>();
+        myStates.Add(gameObject.transform.localPosition.y);
+        myStates.Add(pipePos.x);
+       // string str = string.Format("velocity.y = {0}, MathfClamp is {1} and final result is {2}",myBody.velocity.y, Mathf.Clamp(myBody.velocity.y, -height, height), Mathf.Clamp(myBody.velocity.y, -height, height) / height);
+       // Debug.Log(str);
+
+        myStates.Add((pipePos.y - pipeSpace) );
+        myStates.Add((pipePos.y + pipeSpace) );
         myStates.Add(screenPressed ? 1f : -1);
         return myStates;
     }

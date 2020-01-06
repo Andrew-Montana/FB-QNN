@@ -139,7 +139,20 @@ public class ANN{
 	}
 
 
-	public string PrintWeights()
+    public string PrintBias()
+    {
+        string weightStr = "";
+        foreach (Layer l in layers)
+        {
+            foreach (Neuron n in l.neurons)
+            {
+                weightStr += n.bias + "!";
+            }
+        }
+        return weightStr;
+    }
+
+    public string PrintWeights()
 	{
 		string weightStr = "";
 		foreach(Layer l in layers)
@@ -148,30 +161,41 @@ public class ANN{
 			{
 				foreach(double w in n.weights)
 				{
-					weightStr += w + ",";
+					weightStr += w + "!";
 				}
-				weightStr += n.bias + ",";
 			}
 		}
 		return weightStr;
 	}
 
-	public void LoadWeights(string weightStr)
+	public void LoadWeights(string weightStr, string biasStr)
 	{
 		if(weightStr == "") return;
-		string[] weightValues = weightStr.Split(',');
-		int w = 0;
+        weightStr = weightStr.Replace(",", ".");
+		string[] weightValues = weightStr.Split('!');
+        biasStr = biasStr.Replace(",", ".");
+        string[] biasValues = biasStr.Split('!');
+        int w = 0;
 		foreach(Layer l in layers)
 		{
 			foreach(Neuron n in l.neurons)
 			{
+                int neuronCount = 0;
 				for(int i = 0; i < n.weights.Count; i++)
 				{
-					n.weights[i] = System.Convert.ToDouble(weightValues[w]);
-					w++;
+                    Debug.Log(weightValues[w]);
+					//n.weights[i] = System.Convert.ToDouble(weightValues[w]);
+                    double tmp; 
+                    double.TryParse(weightValues[w], out tmp);
+                    n.weights[i] = tmp;
+
+                    w++;
 				}
-				n.bias = System.Convert.ToDouble(weightValues[w]);
-				w++;
+                double tmpb;
+                double.TryParse(biasValues[neuronCount], out tmpb);
+                // n.bias = System.Convert.ToDouble(weightValues[w]);
+                n.bias = tmpb;
+                neuronCount++;
 			}
 		}
 	}
