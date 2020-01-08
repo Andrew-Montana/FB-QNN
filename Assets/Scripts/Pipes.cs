@@ -4,7 +4,7 @@ using UnityEngine;
 public class Pipes : MonoBehaviour
 {
     private const float spacing = 2f; // Distance between pipes
-    private const int totalPipes = 61;
+   // private const int totalPipes = 61;
     private Vector3 startPos;
     public float pipeVariance = .5f;
 
@@ -20,7 +20,7 @@ public class Pipes : MonoBehaviour
         if (transform.localPosition.x < -spacing)
         {
             transform.Translate(Vector3.right *
-                spacing * totalPipes);
+                spacing * LevelSwitch.totalPipes);
        //     transform.position = new Vector3(transform.position.x, transform.position.y + UnityEngine.Random.Range(-0.1f,0.1f), transform.position.z);
         }
     }
