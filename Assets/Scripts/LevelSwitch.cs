@@ -10,10 +10,12 @@ public class LevelSwitch : MonoBehaviour
     public GameObject pipeset1;
     public GameObject pipeset2;
     public GameObject pipeset3;
+    public GameObject pipeset4;
 
     public PipeSet pip1;
     public PipeSet pip2;
     public PipeSet pip3;
+    public PipeSet pip4;
 
     public Bird bird;
 
@@ -25,10 +27,11 @@ public class LevelSwitch : MonoBehaviour
         pipeset1.SetActive(true);
         pipeset2.SetActive(false);
         pipeset3.SetActive(false);
+        pipeset4.SetActive(false);
 
+        ResetEverything(currentLvl);
         bird.SetPipes(pip1);
         //
-        ResetEverything();
     }
 
     public void SwitchToSecond()
@@ -39,10 +42,11 @@ public class LevelSwitch : MonoBehaviour
         pipeset1.SetActive(false);
         pipeset2.SetActive(true);
         pipeset3.SetActive(false);
+        pipeset4.SetActive(false);
         // 
+        ResetEverything(currentLvl);
         bird.SetPipes(pip2);
         //
-        ResetEverything();
     }
 
     public void SwitchToThird()
@@ -53,15 +57,47 @@ public class LevelSwitch : MonoBehaviour
         pipeset1.SetActive(false);
         pipeset2.SetActive(false);
         pipeset3.SetActive(true);
+        pipeset4.SetActive(false);
 
+        ResetEverything(currentLvl);
         bird.SetPipes(pip3);
         //
-        ResetEverything();
     }
 
-    private void ResetEverything()
+    public void SwitchToFourth()
     {
-        pip1.ResetPos();
-        pip2.ResetPos();
+        currentLvl = 4;
+        totalPipes = 78;
+
+        pipeset1.SetActive(false);
+        pipeset2.SetActive(false);
+        pipeset3.SetActive(false);
+        pipeset4.SetActive(true);
+
+        ResetEverything(currentLvl);
+        bird.SetPipes(pip4);
+        //
+
+    }
+
+    private void ResetEverything(int index)
+    {
+        switch(index)
+        {
+            case 1:
+                pip1.ResetPos();
+                break;
+
+            case 2:
+                pip2.ResetPos();
+                break;
+
+            case 3:
+                pip3.ResetPos();
+                break;
+            case 4:
+                pip4.ResetPos();
+                break;
+        }
     }
 }
