@@ -2,12 +2,34 @@
 using UnityEngine;
 public class PipeSet : MonoBehaviour
 {
+    private static System.Random rand = new System.Random();
+
     public void ResetPos()
     {
         foreach (Transform child in transform)
         {
-            child.GetComponent<Pipes>().InitialPosition();
+            child.GetComponent<Pipes1>().InitialPosition();
         }
+    }
+
+    public static float GetRandomX()
+    {
+       return rand.Next(0, 5);
+    }
+
+    public Transform GetLastPipe()
+    {
+        float lastPipe = -999f;
+        Transform lastChild = null;
+        foreach(Transform child in transform)
+        {
+            if (child.localPosition.x > lastPipe)
+            {
+                lastPipe = child.localPosition.x;
+                lastChild = child;
+            }
+        }
+        return lastChild;
     }
 
     public Transform GetNextPipe()

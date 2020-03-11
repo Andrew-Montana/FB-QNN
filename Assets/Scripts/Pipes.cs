@@ -11,7 +11,11 @@ public class Pipes : MonoBehaviour
     private void Awake()
     {
         startPos = transform.localPosition;
-        RandomizeY(); 
+        foreach(SpriteRenderer sr in transform.gameObject.GetComponentsInChildren<SpriteRenderer>())
+        {
+            sr.sprite = Resources.Load<Sprite>("Sprites/pipe-green");
+        }
+       // RandomizeY(); 
     }
 
     private void LateUpdate()

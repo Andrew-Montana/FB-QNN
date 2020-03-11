@@ -45,7 +45,10 @@ public class Bird : MonoBehaviour
     private float exploreDecay => 0.0001f;                   //chance decay amount for each update
 
     int failCount = 0;
+
     #endregion
+    public UnityEngine.UI.Text failText;
+    public UnityEngine.UI.Text maxTText;
 
     private Rigidbody2D myBody;
     private Vector3 startPos;
@@ -57,6 +60,7 @@ public class Bird : MonoBehaviour
 
     public PipeSet pipes;
     public float counter = 0f;
+    private float maxcounter = 0f;
 
     public ANN GetANN()
     {
@@ -81,6 +85,11 @@ public class Bird : MonoBehaviour
     bool isScale = false;
     void Update()
     {
+        failText.text = failCount.ToString() + " Fails";
+        float mytmp = Mathf.Floor(counter / 2f);
+        if (maxcounter < mytmp)
+            maxcounter = mytmp;
+        maxTText.text = "Max t: " + maxcounter.ToString();
 
         if (Input.GetKeyDown("space"))
         {
@@ -135,28 +144,30 @@ public class Bird : MonoBehaviour
 
     private void TrainAfterDead()
     {
-
+       
         for (int i = replayMemory.Count - 1; i >= 0; i--)
         {
-            List<double> toutputsOld = new List<double>();
-            List<double> toutputsNew = new List<double>();
-            toutputsOld = SoftMax(ann.CalcOutput(replayMemory[i].states));
+            List<double> toutputsOld = new List<double>(); // Q Values with current memory
+            List<double> toutputsNew = new List<double>(); // Q Values for the next memory 
+            toutputsOld = SoftMax(ann.CalcOutput(replayMemory[i].states)); // Old/current values
 
-            double maxQOld = toutputsOld.Max();
-            int action = toutputsOld.ToList().IndexOf(maxQOld);
+            double maxQOld = toutputsOld.Max(); // max q value of the old/current memory
+            int action = toutputsOld.ToList().IndexOf(maxQOld); // best action according to that
 
             double feedback;
             if (i == replayMemory.Count - 1 || replayMemory[i].reward == -1)
-                feedback = replayMemory[i].reward;
+                feedback = replayMemory[i].reward; // if we at the and, then we can't get next memory
             else
             {
-                toutputsNew = SoftMax(ann.CalcOutput(replayMemory[i + 1].states));
-                double maxQ = toutputsNew.Max();
+                toutputsNew = SoftMax(ann.CalcOutput(replayMemory[i + 1].states)); // calculate q values for the next memory
+                double maxQ = toutputsNew.Max(); // max q values from the next state
+                // bellman equation
                 feedback = (replayMemory[i].reward +
-                    discount * maxQ);
+                    discount * maxQ); // current reward + discount * maxQ`
+                // taking this feedback for training ANN
             }
 
-            toutputsOld[action] = feedback;
+            toutputsOld[action] = feedback; // updating max. action of current states with feedback, use it as desired outputs
             ann.Train(replayMemory[i].states, toutputsOld);
         }
 
@@ -175,8 +186,8 @@ public class Bird : MonoBehaviour
     {
 
         Vector3 pipePos = pipes.GetNextPipe().localPosition;
-       //Debug.DrawLine(new Vector3(pipePos.x, pipePos.y + pipeSpace, pipePos.z), new Vector3(pipePos.x + 1, pipePos.y + pipeSpace, pipePos.z), Color.red, 0.1f, false);
-       // Debug.DrawLine(myBody.transform.position, new Vector3(pipePos.x-0.26f, pipePos.y, pipePos.z), Color.black, 0.1f, false);
+       Debug.DrawLine(new Vector3(pipePos.x, pipePos.y + pipeSpace, pipePos.z), new Vector3(pipePos.x + 1, pipePos.y + pipeSpace, pipePos.z), Color.red, 0.1f, false);
+        Debug.DrawLine(myBody.transform.position, new Vector3(pipePos.x-0.26f, pipePos.y, pipePos.z), Color.black, 0.1f, false);
 
         List<double> myStates = new List<double>();
         // myStates.Add(gameObject.transform.localPosition.y );
