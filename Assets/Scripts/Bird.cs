@@ -32,6 +32,9 @@ public class Replay
 
 public class Bird : MonoBehaviour
 {
+    private double cumulative_reward;
+    private int episode;
+
     #region ann part
     private ANN ann;
     private float reward = 0.0f;                            //reward to associate with actions
@@ -62,6 +65,9 @@ public class Bird : MonoBehaviour
     public float counter = 0f;
     private float maxcounter = 0f;
 
+    private string collectdatapath = @"D:\Evaluation\3 Deep Q Learning\1 no exp\1.txt";
+    private int testNumber = 1;
+
     public ANN GetANN()
     {
         return ann;
@@ -77,7 +83,9 @@ public class Bird : MonoBehaviour
 
     private void Start()
     {
-        Time.timeScale = 1;
+        episode = 0;
+        cumulative_reward = 0;
+        Time.timeScale = 3f;
         ann = new ANN(4, 2, 1, 7, 0.4f);
         myBody = GetComponent<Rigidbody2D>();
         startPos = transform.localPosition;
@@ -137,6 +145,8 @@ public class Bird : MonoBehaviour
 
         replayMemory.Add(lastMemory);
 
+        cumulative_reward += reward;
+
         if (dead)
             TrainAfterDead();
 
@@ -174,6 +184,7 @@ public class Bird : MonoBehaviour
         Done();
         replayMemory.Clear();
         failCount++;
+        episode++;
     }
 
     private void Push()
@@ -232,6 +243,10 @@ public class Bird : MonoBehaviour
     public void Done()
     {
         AgentReset();
+        CollectData();
+
+        reward = 0f;
+        cumulative_reward = 0f;
     }
 
     public void AgentReset()
@@ -241,7 +256,26 @@ public class Bird : MonoBehaviour
         dead = false;
         pipes.ResetPos();
         counter = 0f;
+
+
+        ////testNumber++; no sense
+       ///// collectdatapath = @"D:\Evaluation\3 Deep Q Learning\1 no exp\" + testNumber.ToString() + ".txt"; 
     }
+
+    private void CollectData()
+    {
+        SaveCollectDataPattern(collectdatapath);
+    }
+
+    public void SaveCollectDataPattern(string path)
+    {
+        using (System.IO.StreamWriter sr = new System.IO.StreamWriter(path, true))
+        {
+            //  sr.WriteLine("{0};{1};",episode,rewards_current_episode);
+            sr.WriteLine(string.Format("{0};{1:0.000};{2};", episode, cumulative_reward, discount).Replace(',', '.')); 
+        }
+    }
+
 
     private void OnTriggerEnter2D(Collider2D collision2d)
     {
